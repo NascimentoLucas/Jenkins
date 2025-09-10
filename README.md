@@ -26,8 +26,7 @@ Jenkins is preconfigured via JCasC, so the setup wizard is skipped. The admin us
   - For existing data, update credentials in `docker/jenkins/casc/jenkins.yaml`, then rebuild and recreate the container.
 - Update plugins:
   - Edit `docker/jenkins/plugins.txt`
-  - Rebuild: `docker compose build --no-cache`
-  - Restart: `docker compose up -d`
+  - Restart Jenkins: `docker compose up -d` (the container installs/updates plugins on start)
 - Reset instance:
   - Stop: `docker compose down`
   - Remove data: delete `data/jenkins_home/` (this wipes all jobs/config)
@@ -36,4 +35,3 @@ Jenkins is preconfigured via JCasC, so the setup wizard is skipped. The admin us
 **Notes**
 - This is a minimal dev setup. For production, secure credentials (no plain-text), consider HTTPS, backups, and controlled plugin updates.
 - If you need Docker inside Jenkins builds, add Docker-in-Docker or mount the host Docker socket per your environment.
-

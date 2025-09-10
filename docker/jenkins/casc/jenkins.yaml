@@ -1,6 +1,6 @@
 jenkins:
   systemMessage: "Jenkins configured via JCasC."
-  numExecutors: 2
+  numExecutors: 0
   securityRealm:
     local:
       allowsSignup: false
@@ -13,5 +13,4 @@ jenkins:
 
 unclassified:
   location:
-    url: "http://localhost:8080/"
-
+    url: "${JENKINS_URL:-http://localhost:8080/}"

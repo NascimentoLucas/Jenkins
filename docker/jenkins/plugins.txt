@@ -4,6 +4,6 @@ workflow-aggregator
 credentials-binding
 configuration-as-code
 
-# Optional: comment-in for Blue Ocean UI (heavier)
-# blueocean
-
+timestamper
+ansicolor
+blueocean
