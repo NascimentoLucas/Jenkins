@@ -1,0 +1,20 @@
+services:
+  jenkins:
+    build:
+      context: ./docker/jenkins
+    image: jenkins-lts-casc:latest
+    ports:
+      - "${JENKINS_HTTP_PORT:-8080}:8080"
+      - "${JENKINS_AGENT_PORT:-50000}:50000"
+    environment:
+      - JENKINS_ADMIN_ID=${JENKINS_ADMIN_ID:-admin}
+      - JENKINS_ADMIN_PASSWORD=${JENKINS_ADMIN_PASSWORD:-admin123}
+    volumes:
+      - ./data/jenkins_home:/var/jenkins_home
+    restart: unless-stopped
+
+volumes:
+  # Declared for clarity if you prefer named volumes later
+  # jenkins_home:
+  #   driver: local
+

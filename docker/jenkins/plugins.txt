@@ -1,0 +1,9 @@
+# Core essentials
+git
+workflow-aggregator
+credentials-binding
+configuration-as-code
+
+# Optional: comment-in for Blue Ocean UI (heavier)
+# blueocean
+
