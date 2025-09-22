@@ -51,8 +51,12 @@ Jenkins is preconfigured via JCasC, so the setup wizard is skipped. The admin us
 - Clean developer UX: single `docker compose up -d --build` to start.
 
 **Example Files**
-- `BuildScript.cs`: Example Unity build script I use in my projects, it is copied to unity project before open it. Adapt paths, targets, and signing to your needs, or remove if not using Unity.
-- `Jenkinsfile`: Example declarative pipeline I use to build projects (Unity Android showcase). Replace with your own pipeline if your stack differs.
+- `Scripts/BuildScript.cs`: Unity Android build automation script that manages keystores, incremented outputs, and error logging for CI.
+- `Scripts/AddressablesCI.cs`: Addressables build helper for CI jobs, including optional profile selection and clean support.
+- `Jenkinsfiles/Jenkinsfile_build`: Declarative build pipeline that injects secrets, runs the Unity CLI, and archives logs/artifacts.
+- `Jenkinsfiles/Jenkinsfile_addressables`: Pipeline focused on Addressables builds and log collection for targeted content updates.
+- `.env.example`: Sample Docker Compose environment values (ports, admin credentials) to copy into `.env`.
+- `example.json`: Minimal `build_config.json` sample consumed by `BuildScript.cs` during automated builds.
 
 **Architecture**
 ```
@@ -95,3 +99,8 @@ Developer (local)
 
 **License**
 - MIT. See `LICENSE`.
+
+
+
+
+

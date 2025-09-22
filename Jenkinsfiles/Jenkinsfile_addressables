@@ -1,0 +1,70 @@
+pipeline {
+  agent any
+
+  options {
+    timestamps()
+    ansiColor('xterm')
+    durabilityHint('PERFORMANCE_OPTIMIZED')
+    buildDiscarder(logRotator(numToKeepStr: '20'))
+    timeout(time: 60, unit: 'MINUTES')
+  }
+
+  environment {
+    UNITY_EXECUTABLE = "${env.UNITY_2022_3}"               // define this globally or here
+    UNITY_PROJECT    = "${env.WORKSPACE}"
+    UNITY_ASSET      = "${env.WORKSPACE}\\Assets"
+    UNITY_ADDRESSABLES_LOG = "${env.LOG_PATH}\\unity\\SampleAutoBuild_Addressables.log"
+    APP_NAME         = "SampleAutoBuild"
+    // Optional: DEV_TOOL must exist on the agent if you use Copy Agent Assets
+    DEV_TOOL = "${env.DEV_TOOL}"
+  }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Copy Agent Assets') {
+      when { expression { return env.DEV_TOOL && env.DEV_TOOL.trim() } }
+      steps {
+        bat """
+        if not exist "%UNITY_ASSET%" mkdir "%UNITY_ASSET%"
+        xcopy "%DEV_TOOL%\\*" "%UNITY_ASSET%\\" /E /I /Y
+        """
+      }
+    }
+
+    stage('Build Addressables') {
+      steps {
+        bat """
+        "%UNITY_EXECUTABLE%" ^
+          -batchmode -nographics -quit ^
+          -projectPath "%UNITY_PROJECT%" ^
+          -executeMethod Nascimento.Dev.Build.AddressablesCI.Build ^
+          -logFile "%UNITY_ADDRESSABLES_LOG%"
+        """
+      }
+    }
+
+    stage('Collect Logs / Artifacts') {
+      steps {
+        // Copy log back into the workspace so 'archiveArtifacts' can find it
+        bat """
+        if exist "%UNITY_ADDRESSABLES_LOG%" copy /Y "%UNITY_ADDRESSABLES_LOG%" "%WORKSPACE%\\unity-addressables.log"
+        """
+        archiveArtifacts artifacts: 'unity.log, unity-addressables.log', fingerprint: true, allowEmptyArchive: true
+      }
+    }
+  }
+
+  post {
+    always {
+      // Show last lines of the log in the build console (if present)
+      script {
+        if (fileExists("%UNITY_ADDRESSABLES_LOG%")) {
+          powershell 'Get-Content unity.log -Tail 200 | Out-String | Write-Host'
+        }
+      }
+    }
+  }
+}
